@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Baseball ⚾</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(#1b5e20, #2e7d32);
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 { margin-bottom: 20px; text-shadow: 2px 2px 4px #000; }
+    .field {
+      position: relative;
+      width: 320px;
+      height: 140px;
+      background: #0b3d0b;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 3px solid #c5e1a5;
+    }
+    .zone {
+      position: absolute;
+      left: 130px;
+      top: 0;
+      width: 60px;
+      height: 100%;
+      background: rgba(255, 255, 0, 0.2);
+      border-left: 2px solid yellow;
+      border-right: 2px solid yellow;
+    }
+    .ball {
+      position: absolute;
+      top: 55px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 0 6px #fff;
+    }
+    .bat {
+      position: absolute;
+      bottom: 10px;
+      left: 160px;
+      width: 60px;
+      height: 10px;
+      background: orange;
+      border-radius: 5px;
+      transform-origin: left;
+      transform: rotate(0deg);
+      transition: transform 0.15s ease;
+    }
+    .bat.swing {
+      transform: rotate(-45deg);
+    }
+    button {
+      margin-top: 25px;
+      padding: 10px 30px;
+      font-size: 18px;
+      background: #2196f3;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { background: #1976d2; }
+    p { margin-top: 10px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>Mini Baseball ⚾</h1>
+  <div class="field">
+    <div class="zone"></div>
+    <div class="ball" id="ball"></div>
+    <div class="bat" id="bat"></div>
+  </div>
+  <button id="swingBtn">Swing!</button>
+  <p id="score">Hits: 0 | Strikes: 0</p>
+  <p id="message"></p>
+
+  <script>
+    const ball = document.getElementById("ball");
+    const bat = document.getElementById("bat");
+    const scoreText = document.getElementById("score");
+    const msg = document.getElementById("message");
+    const btn = document.getElementById("swingBtn");
+
+    let ballX = 0;
+    let dir = 1;
+    let hits = 0;
+    let strikes = 0;
+    let gameOver = false;
+
+    function moveBall() {
+      if (gameOver) return;
+      ballX += dir * 5;
+      if (ballX >= 300 || ballX <= 0) dir *= -1;
+      ball.style.left = ballX + "px";
+      requestAnimationFrame(moveBall);
+    }
+    moveBall();
+
+    btn.addEventListener("click", () => {
+      if (gameOver) return;
+      bat.classList.add("swing");
+      setTimeout(() => bat.classList.remove("swing"), 200);
+
+      if (ballX > 130 && ballX < 190) {
+        hits++;
+        msg.textContent = "Nice hit!";
+      } else {
+        strikes++;
+        msg.textContent = "Strike!";
+      }
+
+      if (strikes >= 3) {
+        msg.textContent = "Game Over! Final Hits: " + hits;
+        btn.textContent = "Play Again";
+        gameOver = true;
+        btn.onclick = () => location.reload();
+      }
+
+      scoreText.textContent = `Hits: ${hits} | Strikes: ${strikes}`;
+    });
+  </script>
+</body>
+</html>
